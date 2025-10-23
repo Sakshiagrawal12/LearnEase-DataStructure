@@ -210,7 +210,7 @@ from nltk.stem import PorterStemmer
 
 ps = PorterStemmer()
 
-API_KEY = "AIzaSyDSB6UyeqUbnN4rX0itQIlVY_TfjiqcaBg"  # <-- Replace with your API key
+API_KEY = "Insert the API Here"  # <-- Replace with your API key
 MAX_RESULTS = 50  # number of videos to fetch
 
 

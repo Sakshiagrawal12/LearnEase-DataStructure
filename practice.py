@@ -384,4 +384,3 @@ if __name__ == "__main__":
         for i, item in enumerate(items, 1):
             print(f"{i}. {item['title']} ({item['platform']})")
             print(f"   {item['url']}")
-#AIzaSyDSB6UyeqUbnN4rX0itQIlVY_TfjiqcaBg
