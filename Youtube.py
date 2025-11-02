@@ -8,9 +8,7 @@ API_KEY = "AIzaSyDSB6UyeqUbnN4rX0itQIlVY_TfjiqcaBg"  # replace with your YouTube
 MAX_RESULTS = 50
 
 
-# ===============================
-# Convert ISO 8601 Duration → Seconds
-# ===============================
+
 def iso8601_duration_to_seconds(duration):
     match = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", duration)
     if not match:
@@ -21,9 +19,7 @@ def iso8601_duration_to_seconds(duration):
     return hours * 3600 + minutes * 60 + seconds
 
 
-# ===============================
-# Fetch YouTube Data
-# ===============================
+
 def fetch_youtube_data(search_query, order="date"):
     url = (
         f"https://www.googleapis.com/youtube/v3/search?key={API_KEY}"
@@ -66,18 +62,14 @@ def fetch_youtube_data(search_query, order="date"):
     return videos
 
 
-# ===============================
-# Top-K Function
-# ===============================
+
 def top_k_videos(videos, k, key="viewCount"):
     return heapq.nlargest(k, videos, key=lambda x: x[key])
 
 
-# ===============================
-# Combined Search Function
-# ===============================
+
 def search_youtube(query, top_k=5):
-    print(f"🔍 Searching YouTube for '{query}'...")
+    print(f"Searching YouTube for '{query}'...")
 
     latest_videos = fetch_youtube_data(query, order="date")
     popular_videos = fetch_youtube_data(query, order="viewCount")
@@ -87,24 +79,22 @@ def search_youtube(query, top_k=5):
     if all_videos.empty:
         return [], [], [], []
 
-    # Separate shorts & full videos
+
     shorts = all_videos[all_videos["durationSeconds"] <= 60]
     full_videos = all_videos[all_videos["durationSeconds"] > 60]
 
-    # Latest (by date)
+
     latest_shorts = shorts.sort_values("publishedAt", ascending=False).head(top_k)
     latest_full = full_videos.sort_values("publishedAt", ascending=False).head(top_k)
 
-    # Top viewed
+
     top_shorts = shorts.sort_values("viewCount", ascending=False).head(top_k)
     top_full = full_videos.sort_values("viewCount", ascending=False).head(top_k)
 
     return latest_shorts.to_dict("records"), latest_full.to_dict("records"), top_shorts.to_dict("records"), top_full.to_dict("records")
 
 
-# ===============================
-# Main Runner
-# ===============================
+
 def main():
     query = input("Enter search query: ")
 
@@ -112,19 +102,19 @@ def main():
 
     print(f"\n🎬 LATEST YouTube SHORTS for '{query}':\n")
     for i, v in enumerate(latest_shorts, 1):
-        print(f"{i}. {v['title']}\n   📺 {v['channel']} | 👁️ {v['viewCount']} views | ⏱️ {v['durationSeconds']}s | 📅 {v['publishedAt']}\n   🔗 {v['url']}\n")
+        print(f"{i}. {v['title']}\n   {v['channel']} | {v['viewCount']} views |  {v['durationSeconds']}s | {v['publishedAt']}\n   {v['url']}\n")
 
-    print(f"\n📘 LATEST FULL-LENGTH YouTube VIDEOS for '{query}':\n")
+    print(f"\n LATEST FULL-LENGTH YouTube VIDEOS for '{query}':\n")
     for i, v in enumerate(latest_full, 1):
-        print(f"{i}. {v['title']}\n   📺 {v['channel']} | 👁️ {v['viewCount']} views | ⏱️ {v['durationSeconds']}s | 📅 {v['publishedAt']}\n   🔗 {v['url']}\n")
+        print(f"{i}. {v['title']}\n    {v['channel']} | {v['viewCount']} views | {v['durationSeconds']}s | {v['publishedAt']}\n   {v['url']}\n")
 
-    print(f"\n🔥 TOP VIEWED YouTube SHORTS for '{query}':\n")
+    print(f"\n TOP VIEWED YouTube SHORTS for '{query}':\n")
     for i, v in enumerate(top_shorts, 1):
-        print(f"{i}. {v['title']}\n   📺 {v['channel']} | 👁️ {v['viewCount']} views | ⏱️ {v['durationSeconds']}s | 📅 {v['publishedAt']}\n   🔗 {v['url']}\n")
+        print(f"{i}. {v['title']}\n    {v['channel']} |  {v['viewCount']} views | {v['durationSeconds']}s | {v['publishedAt']}\n   {v['url']}\n")
 
-    print(f"\n🏆 TOP VIEWED FULL-LENGTH YouTube VIDEOS for '{query}':\n")
+    print(f"\nTOP VIEWED FULL-LENGTH YouTube VIDEOS for '{query}':\n")
     for i, v in enumerate(top_full, 1):
-        print(f"{i}. {v['title']}\n   📺 {v['channel']} | 👁️ {v['viewCount']} views | ⏱️ {v['durationSeconds']}s | 📅 {v['publishedAt']}\n   🔗 {v['url']}\n")
+        print(f"{i}. {v['title']}\n    {v['channel']} |  {v['viewCount']} views |  {v['durationSeconds']}s |  {v['publishedAt']}\n   {v['url']}\n")
 
 
 if __name__ == "__main__":
