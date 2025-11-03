@@ -4,7 +4,7 @@ import re
 import heapq
 from collections import defaultdict
 
-API_KEY = "AIzaSyDSB6UyeqUbnN4rX0itQIlVY_TfjiqcaBg"  # replace with your YouTube API key
+API_KEY = "ADD API key"  # replace with your YouTube API key
 MAX_RESULTS = 50
 
 
