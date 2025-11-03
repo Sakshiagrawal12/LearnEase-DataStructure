@@ -68,7 +68,7 @@ def search_udemy(query, top_k=5):
     Returns structured top results.
     """
     try:
-        df = pd.read_csv(r"C:\Users\SAKSHI\Downloads\Final-merged-dataset.csv\Final-merged-dataset.csv", low_memory=False)
+        df = pd.read_csv(r"Your filepath", low_memory=False)
 
 
         docs = (df["title"].fillna("") + " " + df["description"].fillna("")).tolist()
