@@ -68,7 +68,7 @@ def search_udemy(query, top_k=5):
     Returns structured top results.
     """
     try:
-        df = pd.read_csv("/Users/bharadwaj/Desktop/DSA-Datasets/Final-merged-dataset.csv", low_memory=False)
+        df = pd.read_csv(r"C:\Users\SAKSHI\Downloads\Final-merged-dataset.csv\Final-merged-dataset.csv", low_memory=False)
 
 
         docs = (df["title"].fillna("") + " " + df["description"].fillna("")).tolist()
@@ -116,5 +116,5 @@ def main():
         print(f"URL: {c.get('url', 'N/A')}\n")
 
 
-if __name__ == "__main__":
+if __name__ == "_main_":
     main()

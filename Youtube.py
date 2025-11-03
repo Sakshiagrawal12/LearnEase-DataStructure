@@ -117,5 +117,5 @@ def main():
         print(f"{i}. {v['title']}\n    {v['channel']} |  {v['viewCount']} views |  {v['durationSeconds']}s |  {v['publishedAt']}\n   {v['url']}\n")
 
 
-if __name__ == "__main__":
+if __name__ == "_main_":
     main()

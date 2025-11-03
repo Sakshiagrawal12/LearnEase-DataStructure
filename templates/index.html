@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎓 LearnEase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎓 LearnEase </h1>
+    <p class="text-muted">Find the best free (YouTube) and paid (Udemy) resources</p>
+
+    <!-- Search Box -->
+    <div class="search-box">
+      <input
+        type="text"
+        id="searchQuery"
+        placeholder="Search for a course... e.g. Java, Data Structures"
+      />
+      <button onclick="searchCourse()">Search</button>
+    </div>
+
+    <hr />
+
+    <!-- YouTube Results -->
+    <div class="dropdown">
+      <label for="youtube-category" class="fw-bold">🎥 YouTube Results (Free Resources)</label><br />
+      <select id="youtube-category" onchange="displayYouTubeCategory()">
+        <option value="shorts">Shorts</option>
+        <option value="full">Full-Length Videos</option>
+        <option value="viewed-shorts">Previously Viewed Shorts</option>
+        <option value="viewed-full">Previously Viewed Full-Length Videos</option>
+      </select>
+    </div>
+
+    <div id="youtube-results" class="mt-4"></div>
+
+    <hr />
+
+    <!-- Udemy Results -->
+    <h4>💰 Udemy Courses (Paid Resources)</h4>
+    <div id="udemy-results" class="mt-4"></div>
+  </div>
+
+  <script>
+    let youtubeData = [];
+
+    // 🔍 Search Function
+    function searchCourse() {
+      const query = document.getElementById("searchQuery").value.trim();
+      if (!query) {
+        alert("Please enter a search term!");
+        return;
+      }
+
+      document.getElementById("youtube-results").innerHTML = "<p>Loading results...</p>";
+      document.getElementById("udemy-results").innerHTML = "<p>Loading results...</p>";
+
+      fetch("/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then((data) => {
+          if (data.error) {
+            alert("Error: " + data.error);
+            return;
+          }
+
+          youtubeData = data.youtube || [];
+          const udemyData = data.udemy || [];
+
+          // ✅ Display first category by default
+          displayYouTubeCategory();
+
+          // ✅ Display Udemy courses (simplified)
+          const udemySection = document.getElementById("udemy-results");
+          udemySection.innerHTML = "";
+          if (udemyData.length === 0) {
+            udemySection.innerHTML = "<p>No Udemy results found.</p>";
+          } else {
+            udemyData.forEach((item) => {
+              const card = `
+                <div class="course-card">
+                  <div class="details">
+                    <h4><a href="${item.url}" target="_blank">${item.title}</a></h4>
+                  </div>
+                </div>`;
+              udemySection.innerHTML += card;
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          document.getElementById("youtube-results").innerHTML =
+            "<p>❌ Failed to load results. Check console.</p>";
+        });
+    }
+
+    // 🎬 Display YouTube videos per category
+    function displayYouTubeCategory() {
+      const category = document.getElementById("youtube-category").value;
+      const youtubeSection = document.getElementById("youtube-results");
+      youtubeSection.innerHTML = "";
+
+      if (!Array.isArray(youtubeData) || youtubeData.length === 0) {
+        youtubeSection.innerHTML = "<p>No results yet. Try searching above!</p>";
+        return;
+      }
+
+      // youtubeData = [shorts, full, viewed-shorts, viewed-full]
+      const categoryMap = {
+        "shorts": 0,
+        "full": 1,
+        "viewed-shorts": 2,
+        "viewed-full": 3,
+      };
+
+      const selectedVideos = youtubeData[categoryMap[category]] || [];
+
+      if (selectedVideos.length === 0) {
+        youtubeSection.innerHTML = "<p>No videos found for this category.</p>";
+        return;
+      }
+
+      selectedVideos.forEach((item) => {
+        const card = `
+          <div class="video-card">
+            <img src="${item.thumbnail || 'https://via.placeholder.com/120x70'}" alt="thumbnail" class="thumb">
+            <div class="details">
+              <h4><a href="${item.url}" target="_blank">${item.title}</a></h4>
+              <p><strong>Channel:</strong> ${item.channel || 'Unknown'}</p>
+            </div>
+          </div>`;
+        youtubeSection.innerHTML += card;
+      });
+    }
+  </script>
+</body>
+</html>
